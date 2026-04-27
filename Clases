@@ -52,7 +52,7 @@ public:
     void jugar() override {
         activar();
     }
-};}
+};
 
 class Hechizo : public Carta {
 protected:
@@ -72,6 +72,22 @@ public:
         aplicarEfecto();
     }
 };
+
+class HechizoOfensivo : public Hechizo {
+private:
+    int danio;
+
+public:
+    HechizoOfensivo(int id, string nombre, int costoMana, int vida, string tipo, string desc,
+                    int duracion, string tipoEfecto, int intensidad, int danio)
+        : Hechizo(id, nombre, costoMana, vida, tipo, desc, duracion, tipoEfecto, intensidad),
+          danio(danio) {}
+
+    void aplicarEfecto() override {
+        cout << "Hechizo ofensivo causa " << danio << " de daño\n";
+    }
+};
+
 class Monstruo : public Carta {
 protected:
     int ataque;
@@ -146,3 +162,4 @@ public:
         cout << "Mago lanza un ataque mágico\n";
     }
 };
+
