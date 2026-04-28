@@ -1,8 +1,0 @@
-int main() {
- // crear mazo aun por hacer
-
-    cout << "\n INICIO DEL JUEGO \n";
-
-
-    return 0;
-}
