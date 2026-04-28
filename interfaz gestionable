@@ -1,0 +1,11 @@
+#pragma once
+
+class Gestionable {
+public:
+    virtual void crear() = 0;
+    virtual void leer() = 0;
+    virtual void actualizar() = 0;
+    virtual void eliminar() = 0;
+
+    virtual ~Gestionable() {}
+};
