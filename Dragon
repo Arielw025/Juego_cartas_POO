@@ -1,0 +1,41 @@
+#pragma once
+#include "Carta.h"
+
+//  CLASE: Dragon
+//  Vida:200  Ataque:80  Defensa:30  Rareza:Rara
+//  Especial: si tiene 2 dragones -> ataque x1.5
+
+
+class Dragon : public Carta {
+public:
+    Dragon(const string& nom = "Dragon")
+        : Carta(nom, 200, 80, 30,
+                "Rara",
+                "Lanza aliento de fuego",
+                "Si tienes 2 Dragones: ataque x1.5") {}
+
+    void mostrar() const override {
+        cout << "  +----------------------------------+" << endl;
+        cout << "  |  DRAGON  [" << rareza << "]" << endl;
+        cout << "  |  Nombre  : " << nombre      << endl;
+        cout << "  |  Vida    : " << vida         << endl;
+        cout << "  |  Ataque  : " << ataque       << endl;
+        cout << "  |  Defensa : " << defensa      << endl;
+        cout << "  |  Desc    : " << descripcion  << endl;
+        cout << "  |  Especial: " << ataqueEspecial << endl;
+        if (especialAplicado)
+            cout << "  |  ** Ataque especial activo **" << endl;
+        cout << "  +----------------------------------+" << endl;
+    }
+
+    // Si llegan 2 dragones a la mano -> ataque base * 1.5
+    void aplicarEspecial() override {
+        if (!especialAplicado) {
+            int nuevoAtaque = (int)(ataque * 1.5f);
+            cout << "  [DRAGON ESPECIAL] Ataque " << ataque
+                 << " -> " << nuevoAtaque << " (x1.5)" << endl;
+            ataque = nuevoAtaque;
+            especialAplicado = true;
+        }
+    }
+};
