@@ -18,19 +18,17 @@ public:
     Jugador(const string& nom) : nombre(nom), vidaTotal(0), danioRecibidoTotal(0) {}
 
     ~Jugador() {
-        // Las cartas son propiedad del Mazo o del rival (robo),
-        // el Juego libera la memoria global
     }
 
     // Agrega una carta a la mano
     void recibirCarta(Carta* c) {
-        // Si es mago, asignar hechizo aleatorio al recibirla
+        // Si es mago, asignar hechizo aleatorio 
         Mago* m = dynamic_cast<Mago*>(c);
         if (m) m->asignarHechizo();
         mano.push_back(c);
     }
 
-    // Revisa ataques especiales de la mano y los aplica si aplica
+// comportamiento de cartas especiales para magificar danios
     void verificarEspeciales() {
         int dragones  = 0, zombies = 0, paladines = 0;
         for (Carta* c : mano) {
@@ -41,7 +39,7 @@ public:
                      c->getAtaque() == 60)       paladines++;
         }
 
-        // Aplicar especial a TODOS los de ese tipo si hay >= 2
+
         for (Carta* c : mano) {
             if (dragones  >= 2 && c->getRareza() == "Rara")
                 c->aplicarEspecial();
@@ -51,14 +49,14 @@ public:
                 c->aplicarEspecial();
         }
 
-        // Magos: mostrar su hechizo asignado
+//Para mostrar el hechizo recibido si se obtiene un mago
         for (Carta* c : mano) {
             Mago* m = dynamic_cast<Mago*>(c);
             if (m) m->aplicarEspecial();
         }
     }
 
-    // Muestra todas las cartas de la mano
+  
     void mostrarMano() const {
         cout << "\n  === Mano de " << nombre
              << " (" << mano.size() << " cartas) ===" << endl;
@@ -68,7 +66,6 @@ public:
         }
     }
 
-    // Elige una carta por indice (1-based), la saca de la mano
     Carta* elegirCarta(int indice) {
         if (indice < 1 || indice > (int)mano.size()) return nullptr;
         Carta* c = mano[indice - 1];
@@ -76,7 +73,7 @@ public:
         return c;
     }
 
-    // Quita una carta aleatoria de la mano (para hechizo robo)
+//por si roban una carta 
     Carta* perderCartaAleatoria() {
         if (mano.empty()) return nullptr;
         int idx = rand() % mano.size();
@@ -85,7 +82,7 @@ public:
         return c;
     }
 
-    // Calcula vida total sumando vida de todas las cartas en mano
+
     int calcularVidaTotal() const {
         int total = 0;
         for (Carta* c : mano) total += c->getVida();
@@ -97,6 +94,7 @@ public:
     }
 
     // Getters
+
     string         getNombre()  const { return nombre; }
     int            getCantidad()const { return (int)mano.size(); }
     bool           sinCartas()  const { return mano.empty(); }
@@ -105,7 +103,7 @@ public:
     return danioRecibidoTotal;
     }
 
-    // Devuelve todas las cartas a un vector externo (al terminar ronda)
+
     vector<Carta*> devolverCartas() {
         vector<Carta*> devueltas = mano;
         mano.clear();
