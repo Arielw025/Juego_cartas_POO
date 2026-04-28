@@ -170,6 +170,7 @@ private:
             }
             int vidaRestante2 = cartaSegundo->getVida() - danio1;
             cartaSegundo->setVida(vidaRestante2);
+            segundo->recibirDanioTotal(danio1);
             cout << "  " << cartaSegundo->getNombre()
                  << " queda con vida: " << vidaRestante2 << endl;
 
@@ -193,6 +194,7 @@ private:
             }
             int vidaRestante1 = cartaPrimero->getVida() - danio2;
             cartaPrimero->setVida(vidaRestante1);
+            primero->recibirDanioTotal(danio2);
             cout << "  " << cartaPrimero->getNombre()
                  << " queda con vida: " << vidaRestante1 << endl;
 
@@ -306,16 +308,20 @@ public:
             pausar();
         }
 
-        // Determinar ganador por vida total
-        int vida1 = j1->calcularVidaTotal();
-        int vida2 = j2->calcularVidaTotal();
-        if (vida1 > vida2)      declararGanador(j1);
-        else if (vida2 > vida1) declararGanador(j2);
-        else {
-            separador();
-            cout << "  EMPATE! Ambos jugadores terminaron con la misma vida." << endl;
-        }
-    }
+        // Determinar ganador por danio total
+            int danio1 = j1->getDanioRecibido();
+            int danio2 = j2->getDanioRecibido();
+
+            if (danio1 < danio2) {
+                declararGanador(j1);
+            }
+                else if (danio2 < danio1) {
+                declararGanador(j2);
+            }
+                else {
+                    separador();
+                    cout << "  EMPATE! Ambos jugadores recibieron el mismo daño." << endl;
+            }
 
     void declararGanador(Jugador* ganador) {
         separador('*');
