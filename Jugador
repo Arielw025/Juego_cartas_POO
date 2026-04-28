@@ -1,0 +1,107 @@
+#pragma once
+#include "Carta.h"
+#include "Mago.h"
+#include <vector>
+#include <string>
+using namespace std;
+
+// ============================================================
+//  CLASE: Jugador
+// ============================================================
+class Jugador {
+private:
+    string         nombre;
+    vector<Carta*> mano;     // cartas en mano
+    int            vidaTotal; // suma de vida de todas sus cartas
+
+public:
+    Jugador(const string& nom) : nombre(nom), vidaTotal(0) {}
+
+    ~Jugador() {
+        // Las cartas son propiedad del Mazo o del rival (robo),
+        // el Juego libera la memoria global
+    }
+
+    // Agrega una carta a la mano
+    void recibirCarta(Carta* c) {
+        // Si es mago, asignar hechizo aleatorio al recibirla
+        Mago* m = dynamic_cast<Mago*>(c);
+        if (m) m->asignarHechizo();
+        mano.push_back(c);
+    }
+
+    // Revisa ataques especiales de la mano y los aplica si aplica
+    void verificarEspeciales() {
+        int dragones  = 0, zombies = 0, paladines = 0;
+        for (Carta* c : mano) {
+            if (c->getRareza() == "Rara")        dragones++;
+            else if (c->getRareza() == "Comun" &&
+                     c->getAtaque() == 40)       zombies++;
+            else if (c->getRareza() == "Comun" &&
+                     c->getAtaque() == 60)       paladines++;
+        }
+
+        // Aplicar especial a TODOS los de ese tipo si hay >= 2
+        for (Carta* c : mano) {
+            if (dragones  >= 2 && c->getRareza() == "Rara")
+                c->aplicarEspecial();
+            if (zombies   >= 2 && c->getRareza() == "Comun" && c->getAtaque() <= 80)
+                c->aplicarEspecial();
+            if (paladines >= 2 && c->getRareza() == "Comun" && c->getAtaque() == 60)
+                c->aplicarEspecial();
+        }
+
+        // Magos: mostrar su hechizo asignado
+        for (Carta* c : mano) {
+            Mago* m = dynamic_cast<Mago*>(c);
+            if (m) m->aplicarEspecial();
+        }
+    }
+
+    // Muestra todas las cartas de la mano
+    void mostrarMano() const {
+        cout << "\n  === Mano de " << nombre
+             << " (" << mano.size() << " cartas) ===" << endl;
+        for (int i = 0; i < (int)mano.size(); i++) {
+            cout << "  Carta [" << i+1 << "]:" << endl;
+            mano[i]->mostrar();
+        }
+    }
+
+    // Elige una carta por indice (1-based), la saca de la mano
+    Carta* elegirCarta(int indice) {
+        if (indice < 1 || indice > (int)mano.size()) return nullptr;
+        Carta* c = mano[indice - 1];
+        mano.erase(mano.begin() + indice - 1);
+        return c;
+    }
+
+    // Quita una carta aleatoria de la mano (para hechizo robo)
+    Carta* perderCartaAleatoria() {
+        if (mano.empty()) return nullptr;
+        int idx = rand() % mano.size();
+        Carta* c = mano[idx];
+        mano.erase(mano.begin() + idx);
+        return c;
+    }
+
+    // Calcula vida total sumando vida de todas las cartas en mano
+    int calcularVidaTotal() const {
+        int total = 0;
+        for (Carta* c : mano) total += c->getVida();
+        return total;
+    }
+
+    // Getters
+    string         getNombre()  const { return nombre; }
+    int            getCantidad()const { return (int)mano.size(); }
+    bool           sinCartas()  const { return mano.empty(); }
+    vector<Carta*>& getMano()         { return mano; }
+
+    // Devuelve todas las cartas a un vector externo (al terminar ronda)
+    vector<Carta*> devolverCartas() {
+        vector<Carta*> devueltas = mano;
+        mano.clear();
+        return devueltas;
+    }
+};
