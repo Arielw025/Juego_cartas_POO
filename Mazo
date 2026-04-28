@@ -9,7 +9,7 @@ using namespace std;
 
 // ============================================================
 //  CLASE: Mazo
-//  30 cartas: 4 Magos, 6 Dragones, 10 Zombies, 10 Paladines
+//  30 cartas(estandaar simplifiacdo): 4 Magos, 6 Dragones, 10 Zombies, 10 Paladines
 // ============================================================
 class Mazo {
 private:
@@ -32,39 +32,39 @@ public:
         cartas.push_back(new Mago("Merlin"));
         cartas.push_back(new Mago("Gandalf"));
         cartas.push_back(new Mago("Saruman"));
-        cartas.push_back(new Mago("Rincewind"));
+        cartas.push_back(new Mago("Potter"));
 
         // 6 Dragones
-        cartas.push_back(new Dragon("Pyros"));
-        cartas.push_back(new Dragon("Glacius"));
-        cartas.push_back(new Dragon("Terranax"));
-        cartas.push_back(new Dragon("Voltaris"));
+        cartas.push_back(new Dragon("Raeghar"));
+        cartas.push_back(new Dragon("Patrache"));
+        cartas.push_back(new Dragon("FuegoSol"));
+        cartas.push_back(new Dragon("Vaelor"));
         cartas.push_back(new Dragon("Shadewing"));
-        cartas.push_back(new Dragon("Emberclaw"));
+        cartas.push_back(new Dragon("Toothless"));
 
         // 10 Zombies
-        cartas.push_back(new Zombie("Rex Podrido"));
-        cartas.push_back(new Zombie("Masa Zombi"));
-        cartas.push_back(new Zombie("El Infectado"));
-        cartas.push_back(new Zombie("Dientes Rotos"));
-        cartas.push_back(new Zombie("Arrastra Pies"));
-        cartas.push_back(new Zombie("Cerebro Muerto"));
-        cartas.push_back(new Zombie("Ojos Blancos"));
-        cartas.push_back(new Zombie("Garra Podrida"));
-        cartas.push_back(new Zombie("Visceras"));
-        cartas.push_back(new Zombie("El Rabiosa"));
+        cartas.push_back(new Zombie("Rick Grimes"));
+        cartas.push_back(new Zombie("Joel"));
+        cartas.push_back(new Zombie("Ellie"));
+        cartas.push_back(new Zombie("Frank West"));
+        cartas.push_back(new Zombie("Robert Kirkman"));
+        cartas.push_back(new Zombie("Columbus"));
+        cartas.push_back(new Zombie("Alice"));
+        cartas.push_back(new Zombie("Nemesis"));
+        cartas.push_back(new Zombie("Caminante"));
+        cartas.push_back(new Zombie("Clicker"));
 
         // 10 Paladines
         cartas.push_back(new Paladin("Sir Lancelot"));
         cartas.push_back(new Paladin("Guardian Sagrado"));
-        cartas.push_back(new Paladin("Arthas"));
+        cartas.push_back(new Paladin("Arthas Menethil"));
         cartas.push_back(new Paladin("Barristan"));
-        cartas.push_back(new Paladin("Leon Divino"));
-        cartas.push_back(new Paladin("Cruzado"));
-        cartas.push_back(new Paladin("Portador de Luz"));
-        cartas.push_back(new Paladin("Escudo Eterno"));
-        cartas.push_back(new Paladin("Juicio Final"));
-        cartas.push_back(new Paladin("Aura Dorada"));
+        cartas.push_back(new Paladin("Tirion"));
+        cartas.push_back(new Paladin("Crusader"));
+        cartas.push_back(new Paladin("Duncan el alto"));
+        cartas.push_back(new Paladin("Ogier el sabio"));
+        cartas.push_back(new Paladin("Lord Soth"));
+        cartas.push_back(new Paladin("Danse"));
     }
 
     // Barajar aleatoriamente
