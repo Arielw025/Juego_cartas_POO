@@ -11,11 +11,11 @@ using namespace std;
 class Jugador {
 private:
     string         nombre;
-    vector<Carta*> mano;     // cartas en mano
-    int            vidaTotal; // suma de vida de todas sus cartas
-
+    vector<Carta*> mano;   
+    int            vidaTotal;
+    int            danioRecibidoTotal;
 public:
-    Jugador(const string& nom) : nombre(nom), vidaTotal(0) {}
+    Jugador(const string& nom) : nombre(nom), vidaTotal(0), danioRecibidoTotal(0) {}
 
     ~Jugador() {
         // Las cartas son propiedad del Mazo o del rival (robo),
@@ -91,12 +91,19 @@ public:
         for (Carta* c : mano) total += c->getVida();
         return total;
     }
+    
+        void recibirDanioTotal(int d) {
+            danioRecibidoTotal += d;
+    }
 
     // Getters
     string         getNombre()  const { return nombre; }
     int            getCantidad()const { return (int)mano.size(); }
     bool           sinCartas()  const { return mano.empty(); }
     vector<Carta*>& getMano()         { return mano; }
+    int getDanioRecibido() const {
+    return danioRecibidoTotal;
+    }
 
     // Devuelve todas las cartas a un vector externo (al terminar ronda)
     vector<Carta*> devolverCartas() {
