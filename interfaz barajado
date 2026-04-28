@@ -1,0 +1,10 @@
+#pragma once
+
+class Barajado {
+public:
+    virtual void barajar() = 0;
+    virtual void ordenarPorTipo() = 0;
+    virtual void ordenarPorCostoMana() = 0;
+
+    virtual ~Barajado() {}
+};
