@@ -1,0 +1,98 @@
+#pragma once
+#include "Carta.h"
+
+// ============================================================
+//  CLASE: Mago
+//  Vida:300  Ataque:100  Defensa:50  Rareza:Legendaria
+//  Especial aleatorio al repartirse:
+//    0 = Hechizo Defensa  (defensa x2,  solo una vez)
+//    1 = Hechizo Ataque   (ataque  x2,  solo una vez)
+//    2 = Hechizo Robo     (roba 1 carta al rival, solo una vez)
+// ============================================================
+class Mago : public Carta {
+private:
+    int  tipoHechizo;      // 0,1,2 asignado alazar al crear
+    bool hechizousado;
+
+    static string nombreHechizo(int t) {
+        if (t == 0) return "Hechizo Defensa (defensa x2)";
+        if (t == 1) return "Hechizo Ataque  (ataque  x2)";
+        return                "Hechizo Robo    (roba una carta al rival)";
+    }
+
+public:
+    Mago(const string& nom = "Mago")
+        : Carta(nom, 300, 100, 50,
+                "Legendaria",
+                "Tiene hechizos secretos que ayudan a ganar el juego",
+                ""),          // el especial se asigna al barajar
+          tipoHechizo(-1), hechizousado(false) {}
+
+    // Se llama cuando la carta se reparte — asigna hechizo aleatorio
+    void asignarHechizo() {
+        if (tipoHechizo == -1) {
+            tipoHechizo = rand() % 3;
+            ataqueEspecial = nombreHechizo(tipoHechizo);
+        }
+    }
+
+    void mostrar() const override {
+        cout << "  +----------------------------------+" << endl;
+        cout << "  |  MAGO  [" << rareza << "]" << endl;
+        cout << "  |  Nombre  : " << nombre     << endl;
+        cout << "  |  Vida    : " << vida        << endl;
+        cout << "  |  Ataque  : " << ataque      << endl;
+        cout << "  |  Defensa : " << defensa     << endl;
+        cout << "  |  Desc    : " << descripcion << endl;
+        cout << "  |  Hechizo : " << ataqueEspecial << endl;
+        if (hechizousado)
+            cout << "  |  ** Hechizo ya utilizado **" << endl;
+        cout << "  +----------------------------------+" << endl;
+    }
+
+    // aplicarEspecial solo muestra el hechizo asignado
+    // El efecto real se ejecuta en usarHechizo()
+    void aplicarEspecial() override {
+        if (tipoHechizo == -1) asignarHechizo();
+        cout << "  [MAGO] Hechizo asignado: " << ataqueEspecial << endl;
+    }
+
+    // Ejecuta el efecto del hechizo
+    // roboExitoso se pone en true si es hechizo robo y hay carta disponible
+    // cartaRobada es la carta que se le quita al rival (puede ser nullptr)
+    // Para hechizo robo el llamador debe pasar la carta robada aparte
+    bool usarHechizo(bool& esRobo) {
+        if (hechizousado) {
+            cout << "  [MAGO] El hechizo ya fue usado." << endl;
+            esRobo = false;
+            return false;
+        }
+        if (tipoHechizo == -1) asignarHechizo();
+
+        esRobo = false;
+        if (tipoHechizo == 0) {
+            // Hechizo Defensa x2
+            int nuevaDef = defensa * 2;
+            cout << "  [MAGO - HECHIZO DEFENSA] Defensa "
+                 << defensa << " -> " << nuevaDef << " (x2)" << endl;
+            defensa = nuevaDef;
+            especialAplicado = true;
+        } else if (tipoHechizo == 1) {
+            // Hechizo Ataque x2
+            int nuevoAtk = ataque * 2;
+            cout << "  [MAGO - HECHIZO ATAQUE] Ataque "
+                 << ataque << " -> " << nuevoAtk << " (x2)" << endl;
+            ataque = nuevoAtk;
+            especialAplicado = true;
+        } else {
+            // Hechizo Robo
+            cout << "  [MAGO - HECHIZO ROBO] Roba una carta aleatoria al rival!" << endl;
+            esRobo = true;
+        }
+        hechizousado = true;
+        return true;
+    }
+
+    int  getTipoHechizo()  const { return tipoHechizo; }
+    bool getHechizoUsado() const { return hechizousado; }
+};
