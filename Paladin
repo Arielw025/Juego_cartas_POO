@@ -1,0 +1,41 @@
+#pragma once
+#include "Carta.h"
+
+// ============================================================
+//  CLASE: Paladin
+//  Vida:150  Ataque:60  Defensa:20  Rareza:Comun
+//  Especial: si tiene 2 paladines -> vida x2
+// ============================================================
+class Paladin : public Carta {
+public:
+    Paladin(const string& nom = "Paladin")
+        : Carta(nom, 150, 60, 20,
+                "Comun",
+                "Caballero con un golpe sagrado",
+                "Si tienes 2 Paladines: vida x2") {}
+
+    void mostrar() const override {
+        cout << "  +----------------------------------+" << endl;
+        cout << "  |  PALADIN  [" << rareza << "]" << endl;
+        cout << "  |  Nombre  : " << nombre      << endl;
+        cout << "  |  Vida    : " << vida         << endl;
+        cout << "  |  Ataque  : " << ataque       << endl;
+        cout << "  |  Defensa : " << defensa      << endl;
+        cout << "  |  Desc    : " << descripcion  << endl;
+        cout << "  |  Especial: " << ataqueEspecial << endl;
+        if (especialAplicado)
+            cout << "  |  ** Vida especial activa **" << endl;
+        cout << "  +----------------------------------+" << endl;
+    }
+
+    // Si llegan 2 paladines a la mano -> vida * 2
+    void aplicarEspecial() override {
+        if (!especialAplicado) {
+            int nuevaVida = vida * 2;
+            cout << "  [PALADIN ESPECIAL] Vida " << vida
+                 << " -> " << nuevaVida << " (x2)" << endl;
+            vida = nuevaVida;
+            especialAplicado = true;
+        }
+    }
+};
