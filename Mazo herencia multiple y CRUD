@@ -1,0 +1,4 @@
+#include "Gestionable.h"
+#include "Barajado.h"
+
+class Mazo : public Gestionable, public Barajado {
