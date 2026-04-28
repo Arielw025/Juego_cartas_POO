@@ -14,11 +14,10 @@ private:
     Jugador* j1;
     Jugador* j2;
     Mazo*    mazo;
-    int      cantCartas;    // cartas por jugador elegidas al inicio
-    int      rondaGlobal;   // quien empieza: 1=j1, 2=j2
-    vector<Carta*> cartasUsadas; // todas las usadas en partida para liberar memoria
+    int      cantCartas;    
+    int      rondaGlobal;   
+    vector<Carta*> cartasUsadas; // cartas usadas, para liberar memoria
 
-    // ── Utilidades de entrada ──────────────────────────────
     void pausar() {
         cout << "\n  [Presione ENTER para continuar...]";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -46,9 +45,9 @@ private:
         cout << "\n";
     }
 
-    // ── Repartir cartas ────────────────────────────────────
+
     void repartirCartas() {
-        // Reparte alternando j1, j2 hasta cantCartas cada uno
+      
         for (int i = 0; i < cantCartas; i++) {
             Carta* c1 = mazo->robar();
             Carta* c2 = mazo->robar();
@@ -59,7 +58,6 @@ private:
              << " a cada jugador." << endl;
     }
 
-    // ── Mostrar mano de un jugador con pausa ──────────────
     void mostrarManoJugador(Jugador* j) {
         separador('-');
         cout << "  Turno de ver cartas: " << j->getNombre() << endl;
@@ -67,7 +65,7 @@ private:
         j->mostrarMano();
     }
 
-    // ── Aplicar ataques especiales ─────────────────────────
+
     void aplicarEspeciales(Jugador* j) {
         separador('-', 40);
         cout << "  [ESPECIALES] Verificando cartas de "
@@ -75,7 +73,7 @@ private:
         j->verificarEspeciales();
     }
 
-    // ── Hechizo Robo del Mago ──────────────────────────────
+
     void ejecutarHechizoRobo(Jugador* dueno, Jugador* rival) {
         cout << "\n  [HECHIZO ROBO] " << dueno->getNombre()
              << " roba una carta aleatoria a "
@@ -92,7 +90,7 @@ private:
         }
     }
 
-    // ── Una ronda de 5 turnos ─────────────────────────────
+
     // primerJugador empieza eligiendo; segundoJugador responde
     bool jugarRonda(Jugador* primero, Jugador* segundo) {
         separador();
@@ -109,7 +107,7 @@ private:
             cout << "  --- Turno " << turno << " de " << turnosRonda
                  << " ---" << endl;
 
-            // --- Jugador primero elige su carta ---
+        //1er elegir carta
             cout << "\n  [" << primero->getNombre()
                  << "] Elige tu carta de ataque:" << endl;
             primero->mostrarMano();
@@ -118,7 +116,7 @@ private:
                                1, primero->getCantidad());
             Carta* cartaPrimero = primero->elegirCarta(idx1);
 
-            // Si es mago con hechizo robo lo resolvemos ahora
+        
             Mago* magoPrimero = dynamic_cast<Mago*>(cartaPrimero);
             if (magoPrimero && !magoPrimero->getHechizoUsado()) {
                 bool esRobo = false;
@@ -126,7 +124,7 @@ private:
                 if (esRobo) ejecutarHechizoRobo(primero, segundo);
             }
 
-            // --- Jugador segundo elige su carta ---
+            //2do elige carta
             cout << "\n  [" << segundo->getNombre()
                  << "] Elige tu carta de ataque:" << endl;
             segundo->mostrarMano();
@@ -135,7 +133,7 @@ private:
                                1, segundo->getCantidad());
             Carta* cartaSegundo = segundo->elegirCarta(idx2);
 
-            // Si es mago con hechizo robo lo resolvemos ahora
+
             Mago* magoSegundo = dynamic_cast<Mago*>(cartaSegundo);
             if (magoSegundo && !magoSegundo->getHechizoUsado()) {
                 bool esRobo = false;
@@ -150,7 +148,7 @@ private:
             cout << "  " << segundo->getNombre()
                  << " usa: " << cartaSegundo->getNombre() << endl;
 
-            // ─── PRIMERO ataca a SEGUNDO ───────────────────
+            //1er ataca a 2do
             cout << "\n  >> " << primero->getNombre()
                  << " ataca con " << cartaPrimero->getNombre()
                  << " (ATK: " << cartaPrimero->getAtaque() << ")"
@@ -174,7 +172,7 @@ private:
             cout << "  " << cartaSegundo->getNombre()
                  << " queda con vida: " << vidaRestante2 << endl;
 
-            // ─── SEGUNDO ataca a PRIMERO ───────────────────
+            // 2do ataca 1er
             cout << "\n  >> " << segundo->getNombre()
                  << " ataca con " << cartaSegundo->getNombre()
                  << " (ATK: " << cartaSegundo->getAtaque() << ")"
@@ -211,7 +209,7 @@ private:
         return true;
     }
 
-    // ── Resumen de cartas en mano ──────────────────────────
+
     void mostrarResumen() {
         separador();
         cout << "  ESTADO ACTUAL" << endl;
@@ -232,7 +230,7 @@ public:
         for (Carta* c : cartasUsadas) delete c;
     }
 
-    // ── FLUJO PRINCIPAL ────────────────────────────────────
+// Flujo de partida principal..
     void iniciar() {
         separador();
         cout << "  INICIO DE PARTIDA" << endl;
@@ -246,7 +244,7 @@ public:
         Jugador* segundoTurno = j2;
 
         while (true) {
-            // ── Repartir cartas para esta ronda ───────────
+
             separador();
             cout << "  Repartiendo " << cantCartas
                  << " cartas a cada jugador..." << endl;
@@ -257,25 +255,25 @@ public:
                 break;
             }
 
-            // ── Jugador 1 ve sus cartas + especiales ──────
+       
             pausar();
             mostrarManoJugador(j1);
             aplicarEspeciales(j1);
             pausar();
 
-            // ── Jugador 2 ve sus cartas + especiales ──────
+    
             mostrarManoJugador(j2);
             aplicarEspeciales(j2);
             pausar();
 
-            // ── Jugar 5 turnos (ronda) ────────────────────
+    
             jugarRonda(primerTurno, segundoTurno);
             mostrarResumen();
 
-            // ── Verificar condicion de victoria ──────────
+          //condicion para terminar/ganar prtida 
             if (j1->sinCartas() && j2->sinCartas()) {
-                // Ambos sin cartas — gana quien tenga mas vida total
-                // (vida de las cartas que quedan en mano, 0 si no hay)
+                // Ambos sin cartas — gana quien tenga menos danio recibido
+                // Quien se quede sin cartas primero 
                 break;
             }
             if (j1->sinCartas()) {
@@ -287,22 +285,19 @@ public:
                 return;
             }
 
-            // ── Devolver cartas restantes al mazo y rebarajar ─
+            // Rebarajar (para más de 1 ronda, 5 cartas) 
             separador('-', 40);
             cout << "  Fin de ronda. Devolviendo cartas al mazo..." << endl;
             vector<Carta*> dev1 = j1->devolverCartas();
             vector<Carta*> dev2 = j2->devolverCartas();
-            // Reconstruir mazo con las cartas devueltas
-            // (Las cartas usadas en combate ya estan en cartasUsadas)
-            // Reiniciamos el mazo y reagregamos las devueltas
-            // Para simplificar: se reconstruye el mazo original y se rebaraja
+            // Cartas usadas enviadas a cartasUsada
             mazo->construir();
             mazo->barajar();
-            // Las cartas devueltas las liberamos (ya no se usan)
+            // Las cartas devueltas liberan memoria  
             for (Carta* c : dev1) cartasUsadas.push_back(c);
             for (Carta* c : dev2) cartasUsadas.push_back(c);
 
-            // ── Intercambiar quien empieza ────────────────
+            // Intercambiar quien empieza
             swap(primerTurno, segundoTurno);
             rondaGlobal++;
             pausar();
