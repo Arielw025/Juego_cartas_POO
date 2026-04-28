@@ -1,0 +1,158 @@
+#pragma once
+#include "Juego.h"
+#include <iostream>
+#include <limits>
+using namespace std;
+
+// ============================================================
+//  CLASE: Menu
+//  Pantalla de inicio: nombres, cantidad de cartas, iniciar
+// ============================================================
+class Menu {
+private:
+    void separador(char c = '=', int n = 50) {
+        cout << "\n";
+        for (int i = 0; i < n; i++) cout << c;
+        cout << "\n";
+    }
+
+    int leerInt(const string& msg, int min, int max) {
+        int val;
+        while (true) {
+            cout << msg;
+            if (cin >> val && val >= min && val <= max) {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                return val;
+            }
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "  Valor invalido. Debe estar entre "
+                 << min << " y " << max << ".\n";
+        }
+    }
+
+    string leerNombre(const string& msg) {
+        string nombre;
+        cout << msg;
+        // Limpiar buffer previo
+        if (cin.peek() == '\n') cin.ignore();
+        getline(cin, nombre);
+        while (nombre.empty()) {
+            cout << "  El nombre no puede estar vacio. " << msg;
+            getline(cin, nombre);
+        }
+        return nombre;
+    }
+
+public:
+    void mostrar() {
+        int opcion = 0;
+        do {
+            separador();
+            cout << "   SIMULADOR DE JUEGO DE CARTAS" << endl;
+            cout << "   Barbara Perez / Ariel Martinez" << endl;
+            separador();
+            cout << "  1. Nueva partida" << endl;
+            cout << "  2. Ver reglas del juego" << endl;
+            cout << "  0. Salir" << endl;
+            opcion = leerInt("  >> Opcion: ", 0, 2);
+
+            switch (opcion) {
+                case 1: menuNuevaPartida(); break;
+                case 2: mostrarReglas();    break;
+                case 0:
+                    cout << "\n  Hasta pronto!\n" << endl;
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    void menuNuevaPartida() {
+        separador();
+        cout << "  NUEVA PARTIDA — Configuracion" << endl;
+        separador('-', 40);
+
+        // Nombre jugador 1
+        string nom1 = leerNombre("  Nombre del Jugador 1: ");
+
+        // Nombre jugador 2
+        string nom2 = leerNombre("  Nombre del Jugador 2: ");
+
+        // El mazo tiene 30 cartas, cada jugador recibe X
+        // Max practico: 30/2 = 15 (para que alcancen para los dos)
+        separador('-', 40);
+        cout << "  Cantidad de cartas por jugador" << endl;
+        cout << "  (el mazo tiene 30 cartas, max 15 por jugador)" << endl;
+        int cantCartas = leerInt("  >> Cantidad de cartas: ", 1, 15);
+
+        separador('-', 40);
+        cout << "  Resumen de la partida:" << endl;
+        cout << "    Jugador 1  : " << nom1 << endl;
+        cout << "    Jugador 2  : " << nom2 << endl;
+        cout << "    Cartas c/u : " << cantCartas << endl;
+        separador('-', 40);
+        cout << "  1. Comenzar partida" << endl;
+        cout << "  0. Cancelar" << endl;
+        int conf = leerInt("  >> ", 0, 1);
+        if (conf == 0) return;
+
+        // Crear objetos y lanzar el juego
+        Jugador* j1   = new Jugador(nom1);
+        Jugador* j2   = new Jugador(nom2);
+        Mazo*    mazo = new Mazo();
+
+        Juego juego(j1, j2, mazo, cantCartas);
+        juego.iniciar();
+
+        delete j1;
+        delete j2;
+        delete mazo;
+    }
+
+    void mostrarReglas() {
+        separador();
+        cout << "  REGLAS DEL JUEGO" << endl;
+        separador('-', 40);
+        cout << "\n  MAZO: 30 cartas\n"
+             << "    - 4  Magos     (Legendaria)\n"
+             << "    - 6  Dragones  (Rara)\n"
+             << "    - 10 Zombies   (Comun)\n"
+             << "    - 10 Paladines (Comun)\n";
+
+        cout << "\n  ESTADISTICAS DE CARTAS:\n"
+             << "    Dragon  : Vida 200 | ATK 80 | DEF 30\n"
+             << "    Zombie  : Vida 100 | ATK 40 | DEF 10\n"
+             << "    Paladin : Vida 150 | ATK 60 | DEF 20\n"
+             << "    Mago    : Vida 300 | ATK 100| DEF 50\n";
+
+        cout << "\n  ATAQUES ESPECIALES:\n"
+             << "    Dragon  : 2 o mas dragones en mano -> ATK x1.5\n"
+             << "    Zombie  : 2 o mas zombies en mano  -> DEF x2\n"
+             << "    Paladin : 2 o mas paladines en mano-> VID x2\n"
+             << "    Mago    : hechizo aleatorio al recibir la carta\n"
+             << "      - Hechizo Defensa : DEF x2 (permanente)\n"
+             << "      - Hechizo Ataque  : ATK x2 (permanente)\n"
+             << "      - Hechizo Robo    : roba 1 carta al rival\n"
+             << "      * Los hechizos se usan 1 sola vez\n";
+
+        cout << "\n  DEFENSA (dados):\n"
+             << "    Se lanzan 2 dados. Si la suma es PAR\n"
+             << "    la defensa se aplica; si es IMPAR no.\n";
+
+        cout << "\n  FLUJO DEL JUEGO:\n"
+             << "    1. Se baraja el mazo y se reparten X cartas a cada jugador\n"
+             << "    2. Cada jugador ve su mano y se aplican especiales\n"
+             << "    3. Se juegan 5 turnos por ronda:\n"
+             << "       - Primero elige carta | Segundo elige carta\n"
+             << "       - Se combate: cada uno ataca al otro\n"
+             << "       - Se lanzan dados para defensa\n"
+             << "    4. Al terminar 5 turnos, se recogen cartas\n"
+             << "       y el otro jugador empieza la siguiente ronda\n"
+             << "    5. Gana quien deje al rival sin cartas.\n";
+
+        separador('-', 40);
+        cout << "  [Presione ENTER para volver...]";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.get();
+    }
+};
