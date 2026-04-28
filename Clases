@@ -1,56 +1,52 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <ctime> 
 using namespace std;
 
 class Carta {
 protected:
     int id;
     string nombre;
-    int costoMana;
+    int Mana;
     int vida;
     string tipo;
-    string descripcion;
 
 public:
-    Carta(int id, string nombre, int costoMana, int vida, string tipo, string descripcion)
-        : id(id), nombre(nombre), costoMana(costoMana), vida(vida), tipo(tipo), descripcion(descripcion) {}
+    Carta(int id, string nombre, int Mana, int vida, string tipo)
+        : id(id), nombre(nombre), Mana(Mana), vida(vida), tipo(tipo) {}
 
     virtual ~Carta() {}
 
     virtual void jugar() = 0;
 
     virtual void mostrar() const {
-        cout << "Carta: " << nombre << " | Mana: " << costoMana << endl;
+        cout << "Carta: " << nombre << " | Mana: " << Mana << endl;
     }
-
-    string getNombre() { return nombre; }
-    void setNombre(string n) { nombre = n; }
 };
 
 class Trampa : public Carta {
 private:
-    int dano;
+    int danio;
     string tipoDanio;
-    string condicionActivacion;
     bool activa;
 
 public:
-    Trampa(int id, string nombre, int costoMana, int vida, string tipo, string desc,
-           int dano, string tipoDanio, string condicion)
-        : Carta(id, nombre, costoMana, vida, tipo, desc),
-          dano(dano), tipoDanio(tipoDanio), condicionActivacion(condicion), activa(false) {}
+    Trampa(int id, string nombre, int Mana, int vida, string tipo,
+           int danio, string tipoDanio)
+        : Carta(id, nombre, Mana, vida, tipo),
+          danio(danio), tipoDanio(tipoDanio), activa(false) {}
 
     void activar() { activa = true; }
-    void desactivar() { activa = false; }
 
     void aplicarEfecto() {
         if (activa)
-            cout << "Trampa activa: daño " << dano << endl;
+            cout << "Trampa activa: daño " << danio << endl;
     }
 
     void jugar() override {
         activar();
+        cout << "Trampa activada: " << nombre << endl;
     }
 };
 
@@ -61,30 +57,20 @@ protected:
     int intensidad;
 
 public:
-    Hechizo(int id, string nombre, int costoMana, int vida, string tipo, string desc,
+    Hechizo(int id, string nombre, int Mana, int vida, string tipo,
             int duracion, string tipoEfecto, int intensidad)
-        : Carta(id, nombre, costoMana, vida, tipo, desc),
+        : Carta(id, nombre, Mana, vida, tipo),
           duracion(duracion), tipoEfecto(tipoEfecto), intensidad(intensidad) {}
 
-    virtual void aplicarEfecto() = 0;
+    void aplicarEfecto() {
+        cout << "Hechizo: " << tipoEfecto
+             << " Intensidad: " << intensidad
+             << " Duracion: " << duracion << endl;
+    }
 
     void jugar() override {
+        cout << "Usando hechizo: " << nombre << endl;
         aplicarEfecto();
-    }
-};
-
-class HechizoOfensivo : public Hechizo {
-private:
-    int danio;
-
-public:
-    HechizoOfensivo(int id, string nombre, int costoMana, int vida, string tipo, string desc,
-                    int duracion, string tipoEfecto, int intensidad, int danio)
-        : Hechizo(id, nombre, costoMana, vida, tipo, desc, duracion, tipoEfecto, intensidad),
-          danio(danio) {}
-
-    void aplicarEfecto() override {
-        cout << "Hechizo ofensivo causa " << danio << " de daño\n";
     }
 };
 
@@ -93,13 +79,12 @@ protected:
     int ataque;
     int defensa;
     string tipoElemento;
-    int nivel;
 
 public:
-    Monstruo(int id, string nombre, int costoMana, int vida, string tipo, string desc,
-             int ataque, int defensa, string elemento, int nivel)
-        : Carta(id, nombre, costoMana, vida, tipo, desc),
-          ataque(ataque), defensa(defensa), tipoElemento(elemento), nivel(nivel) {}
+    Monstruo(int id, string nombre, int Mana, int vida, string tipo,
+             int ataque, int defensa, string elemento)
+        : Carta(id, nombre, Mana, vida, tipo),
+          ataque(ataque), defensa(defensa), tipoElemento(elemento) {}
 
     virtual void atacar() = 0;
 
@@ -107,22 +92,19 @@ public:
         vida -= dmg;
         if (vida < 0) vida = 0;
     }
-
-    void jugar() override {
-        cout << nombre << " entra al campo de batalla.\n";
-    }
 };
-class Dragon : public Monstruo {
-private:
-    string tipoAliento;
 
+class Dragon : public Monstruo {
 public:
     Dragon(int id, string nombre)
-        : Monstruo(id, nombre, 10, 100, "Dragon", "Bestia legendaria", 50, 30, "Fuego", 5),
-          tipoAliento("Fuego") {}
+        : Monstruo(id, nombre, 10, 100, "Dragon", 50, 30, "Fuego") {}
 
     void atacar() override {
-        cout << "Dragon ataca con aliento de " << tipoAliento << endl;
+        cout << "Dragon ataca con fuego\n";
+    }
+
+    void jugar() override {
+        cout << nombre << " entra al campo\n";
     }
 };
 
@@ -132,13 +114,18 @@ private:
 
 public:
     Arquero(int id, string nombre)
-        : Monstruo(id, nombre, 4, 70, "Arquero", "Ataque a distancia", 25, 15, "Viento", 3),
+        : Monstruo(id, nombre, 4, 70, "Arquero", 25, 15, "Viento"),
           precision(80) {}
 
     void atacar() override {
         cout << "Arquero dispara una flecha precisa\n";
     }
+
+    void jugar() override {
+        cout << nombre << " entra al campo\n";
+    }
 };
+
 class Mago : public Monstruo {
 private:
     int manaInterno;
@@ -147,19 +134,116 @@ private:
 
 public:
     Mago(int id, string nombre)
-        : Monstruo(id, nombre, 5, 80, "Mago", "Usuario de magia", 15, 10, "Luz", 4),
+        : Monstruo(id, nombre, 5, 80, "Mago", 15, 10, "Luz"),
           manaInterno(100) {}
-
-    void agregarHechizo(Hechizo* h) {
-        hechizos.push_back(h);
-    }
-
-    void colocarTrampa(Trampa* t) {
-        trampas.push_back(t);
-    }
 
     void atacar() override {
         cout << "Mago lanza un ataque mágico\n";
     }
+
+    void jugar() override {
+        cout << nombre << " entra al campo\n";
+    }
 };
+
+class Baraja {
+private:
+    vector<Carta*> cartas;
+
+public:
+    void agregarCarta(Carta* c) {
+        cartas.push_back(c);
+    }
+
+    void mostrarBaraja() {
+        cout << "\n Baraja \n";
+        for (auto c : cartas) {
+            c->mostrar();
+        }
+    }
+
+    Carta* robarCarta() {
+        if (cartas.empty()) {
+            cout << "No hay cartas\n";
+            return nullptr;
+        }
+
+        Carta* c = cartas.back();
+        cartas.pop_back();
+        return c;
+    }
+
+    bool estaVacia() {
+        return cartas.empty();
+    }
+};
+
+Carta* crearCartaAleatoria(int id) {
+    int tipo = rand() % 5;
+
+    switch (tipo) {
+        case 0:
+            return new Dragon(id, "Dragon " + to_string(id));
+
+        case 1:
+            return new Arquero(id, "Arquero " + to_string(id));
+
+        case 2:
+            return new Mago(id, "Mago " + to_string(id));
+
+        case 3:
+            return new Hechizo(
+                id,
+                "Hechizo " + to_string(id),
+                rand() % 5 + 1,
+                0,
+                "Hechizo",
+                rand() % 3 + 1,
+                "Efecto aleatorio",
+                rand() % 30 + 10
+            );
+
+        case 4:
+            return new Trampa(
+                id,
+                "Trampa " + to_string(id),
+                rand() % 5 + 1,
+                0,
+                "Trampa",
+                rand() % 25 + 5,
+                "Daño sorpresa"
+            );
+    }
+
+    return nullptr;
+}
+
+int main() {
+    srand(time(0));
+
+    Baraja baraja;
+
+    int cantidadCartas = 10;
+
+    // Baraja aleatoria
+    for (int i = 0; i < cantidadCartas; i++) {
+        Carta* c = crearCartaAleatoria(i + 1);
+        baraja.agregarCarta(c);
+    }
+
+    // Mostrar baraja
+    baraja.mostrarBaraja();
+
+    cout << "\nRobando cartas...\n";
+
+    while (!baraja.estaVacia()) {
+        Carta* carta = baraja.robarCarta();
+        if (carta) {
+            carta->mostrar();
+            carta->jugar();
+        }
+    }
+
+    return 0;
+}
 
