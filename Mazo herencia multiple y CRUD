@@ -1,4 +1,130 @@
-#include "Gestionable.h"
-#include "Barajado.h"
 
 class Mazo : public Gestionable, public Barajado {
+#pragma once
+#include "Gestionable.h"
+#include "Barajado.h"
+#include "Dragon.h"
+#include "Zombie.h"
+#include "Paladin.h"
+#include "Mago.h"
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// ============================================================
+//  CLASE: Mazo
+//  30 cartas(estandaar simplifiacdo): 4 Magos, 6 Dragones, 10 Zombies, 10 Paladines
+// ============================================================
+
+
+class Mazo : public Gestionable, public Barajado {
+private:
+    vector<Carta*> cartas;
+
+public:
+    Mazo() { construir(); }
+
+    ~Mazo() {
+        for (Carta* c : cartas) delete c;
+        cartas.clear();
+    }
+
+    // Crea las 30 cartas con sus nombres
+    void construir() {
+        for (Carta* c : cartas) delete c;
+        cartas.clear();
+
+        // 4 Magos
+        cartas.push_back(new Mago("Merlin"));
+        cartas.push_back(new Mago("Gandalf"));
+        cartas.push_back(new Mago("Saruman"));
+        cartas.push_back(new Mago("Potter"));
+
+        // 6 Dragones
+        cartas.push_back(new Dragon("Raeghar"));
+        cartas.push_back(new Dragon("Patrache"));
+        cartas.push_back(new Dragon("FuegoSol"));
+        cartas.push_back(new Dragon("Vaelor"));
+        cartas.push_back(new Dragon("Shadewing"));
+        cartas.push_back(new Dragon("Toothless"));
+
+        // 10 Zombies
+        cartas.push_back(new Zombie("Rick Grimes"));
+        cartas.push_back(new Zombie("Joel"));
+        cartas.push_back(new Zombie("Ellie"));
+        cartas.push_back(new Zombie("Frank West"));
+        cartas.push_back(new Zombie("Robert Kirkman"));
+        cartas.push_back(new Zombie("Columbus"));
+        cartas.push_back(new Zombie("Alice"));
+        cartas.push_back(new Zombie("Nemesis"));
+        cartas.push_back(new Zombie("Caminante"));
+        cartas.push_back(new Zombie("Clicker"));
+
+        // 10 Paladines
+        cartas.push_back(new Paladin("Sir Lancelot"));
+        cartas.push_back(new Paladin("Guardian Sagrado"));
+        cartas.push_back(new Paladin("Arthas Menethil"));
+        cartas.push_back(new Paladin("Barristan"));
+        cartas.push_back(new Paladin("Tirion"));
+        cartas.push_back(new Paladin("Crusader"));
+        cartas.push_back(new Paladin("Duncan el alto"));
+        cartas.push_back(new Paladin("Ogier el sabio"));
+        cartas.push_back(new Paladin("Lord Soth"));
+        cartas.push_back(new Paladin("Danse"));
+    }
+
+  // métodos de gestionable
+
+      void crear() override {
+      construir();
+    }
+
+      void leer() override {
+      mostrar();
+    }
+  
+      void actualizar() override {
+      barajar();
+    }
+  
+      void eliminar() override {
+        for (Carta* c : cartas) delete c;
+        cartas.clear();
+    }
+
+    // Barajar aleatoriamente
+    void barajar() {
+        for (int i = (int)cartas.size() - 1; i > 0; i--) {
+            int j = rand() % (i + 1);
+            swap(cartas[i], cartas[j]);
+        }
+        cout << "[MAZO] Barajado. Total: " << cartas.size() << " cartas." << endl;
+    }
+
+    // Toma la carta del tope y la retorna (la saca del mazo)
+    Carta* robar() {
+        if (cartas.empty()) return nullptr;
+        Carta* c = cartas.back();
+        cartas.pop_back();
+        return c;
+    }
+
+    // Toma una carta aleatoria (para hechizo robo)
+    Carta* robarAleatoria() {
+        if (cartas.empty()) return nullptr;
+        int idx = rand() % cartas.size();
+        Carta* c = cartas[idx];
+        cartas.erase(cartas.begin() + idx);
+        return c;
+    }
+
+    int  getTamano()  const { return (int)cartas.size(); }
+    bool estaVacio()  const { return cartas.empty(); }
+
+    void mostrar() const {
+        cout << "\n  [MAZO - " << cartas.size() << " cartas restantes]" << endl;
+        for (int i = 0; i < (int)cartas.size(); i++)
+            cout << "    " << i+1 << ". " << cartas[i]->getNombre()
+                 << " (" << cartas[i]->getRareza() << ")" << endl;
+    }
+};
