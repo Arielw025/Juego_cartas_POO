@@ -1,5 +1,3 @@
-
-class Mazo : public Gestionable, public Barajado {
 #pragma once
 #include "Gestionable.h"
 #include "Barajado.h"
