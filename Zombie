@@ -3,38 +3,38 @@
 
 // ============================================================
 //  CLASE: Zombie
-//  Vida:100  Ataque:40  Defensa:10  Rareza:Comun
-//  Especial: si tiene 2 zombies -> defensa x2
+//  VID:100  ATK:40  DEF:10  Rareza:Comun
+//  Especial: 2 o mas zombies en TU mano -> DEF x2 (una vez)
 // ============================================================
 class Zombie : public Carta {
 public:
-    Zombie(const string& nom = "Zombie")
-        : Carta(nom, 100, 40, 10,
+    Zombie()
+        : Carta("Zombie", 100, 40, 10,
                 "Comun",
                 "Muerde e infecta a su oponente",
-                "Si tienes 2 Zombies: defensa x2") {}
+                "2 Zombies en mano -> DEF x2") {}
 
     void mostrar() const override {
-        cout << "  +----------------------------------+" << endl;
-        cout << "  |  ZOMBIE  [" << rareza << "]" << endl;
-        cout << "  |  Nombre  : " << nombre      << endl;
-        cout << "  |  Vida    : " << vida         << endl;
-        cout << "  |  Ataque  : " << ataque       << endl;
-        cout << "  |  Defensa : " << defensa      << endl;
-        cout << "  |  Desc    : " << descripcion  << endl;
-        cout << "  |  Especial: " << ataqueEspecial << endl;
+        cout << "  +-----------------------------------------+" << endl;
+        cout << "  |  ** ZOMBIE **           [" << rareza << "]" << endl;
+        cout << "  |  Nombre  : " << nombre         << endl;
+        cout << "  |  Vida    : " << vida
+             << " / " << vidaBase                   << endl;
+        cout << "  |  Ataque  : " << ataque          << endl;
+        cout << "  |  Defensa : " << defensa         << endl;
+        cout << "  |  Desc.   : " << descripcion     << endl;
+        cout << "  |  Especial: " << ataqueEspecial  << endl;
         if (especialAplicado)
-            cout << "  |  ** Defensa especial activa **" << endl;
-        cout << "  +----------------------------------+" << endl;
+            cout << "  |  [!] DEF ya multiplicada (x2)" << endl;
+        cout << "  +-----------------------------------------+" << endl;
     }
 
-    // Si llegan 2 zombies a la mano -> defensa * 2
     void aplicarEspecial() override {
         if (!especialAplicado) {
-            int nuevaDef = defensa * 2;
-            cout << "  [ZOMBIE ESPECIAL] Defensa " << defensa
-                 << " -> " << nuevaDef << " (x2)" << endl;
-            defensa = nuevaDef;
+            int nuevo = defensa * 2;
+            cout << "    [ZOMBIE ESPECIAL] DEF "
+                 << defensa << " --> " << nuevo << " (x2)" << endl;
+            defensa = nuevo;
             especialAplicado = true;
         }
     }
