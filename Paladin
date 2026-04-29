@@ -3,38 +3,39 @@
 
 // ============================================================
 //  CLASE: Paladin
-//  Vida:150  Ataque:60  Defensa:20  Rareza:Comun
-//  Especial: si tiene 2 paladines -> vida x2
+//  VID:150  ATK:60  DEF:20  Rareza:Comun
+//  Especial: 2 o mas paladines en TU mano -> VID x2 (una vez)
 // ============================================================
 class Paladin : public Carta {
 public:
-    Paladin(const string& nom = "Paladin")
-        : Carta(nom, 150, 60, 20,
+    Paladin()
+        : Carta("Paladin", 150, 60, 20,
                 "Comun",
                 "Caballero con un golpe sagrado",
-                "Si tienes 2 Paladines: vida x2") {}
+                "2 Paladines en mano -> VID x2") {}
 
     void mostrar() const override {
-        cout << "  +----------------------------------+" << endl;
-        cout << "  |  PALADIN  [" << rareza << "]" << endl;
-        cout << "  |  Nombre  : " << nombre      << endl;
-        cout << "  |  Vida    : " << vida         << endl;
-        cout << "  |  Ataque  : " << ataque       << endl;
-        cout << "  |  Defensa : " << defensa      << endl;
-        cout << "  |  Desc    : " << descripcion  << endl;
-        cout << "  |  Especial: " << ataqueEspecial << endl;
+        cout << "  +-----------------------------------------+" << endl;
+        cout << "  |  ** PALADIN **          [" << rareza << "]" << endl;
+        cout << "  |  Nombre  : " << nombre         << endl;
+        cout << "  |  Vida    : " << vida
+             << " / " << vidaBase                   << endl;
+        cout << "  |  Ataque  : " << ataque          << endl;
+        cout << "  |  Defensa : " << defensa         << endl;
+        cout << "  |  Desc.   : " << descripcion     << endl;
+        cout << "  |  Especial: " << ataqueEspecial  << endl;
         if (especialAplicado)
-            cout << "  |  ** Vida especial activa **" << endl;
-        cout << "  +----------------------------------+" << endl;
+            cout << "  |  [!] VID ya multiplicada (x2)" << endl;
+        cout << "  +-----------------------------------------+" << endl;
     }
 
-    // Si llegan 2 paladines a la mano -> vida * 2
     void aplicarEspecial() override {
         if (!especialAplicado) {
-            int nuevaVida = vida * 2;
-            cout << "  [PALADIN ESPECIAL] Vida " << vida
-                 << " -> " << nuevaVida << " (x2)" << endl;
-            vida = nuevaVida;
+            int nuevo = vida * 2;
+            cout << "    [PALADIN ESPECIAL] VID "
+                 << vida << " --> " << nuevo << " (x2)" << endl;
+            vida    = nuevo;
+            vidaBase = nuevo;   // actualizar base tambien
             especialAplicado = true;
         }
     }
